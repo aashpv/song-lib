@@ -169,7 +169,7 @@ func TestDeleteSong(t *testing.T) {
 	}
 
 	// Тестируем удаление песни
-	err = repo.DeleteSong(id)
+	_, err = repo.DeleteSong(id)
 	if err != nil {
 		t.Fatalf("failed to delete song: %v", err)
 	}
@@ -213,7 +213,7 @@ func TestUpdateSong(t *testing.T) {
 	// Тестируем изменение песни
 	song.ID = id
 	song.Name = "Updated Song Name"
-	err = repo.UpdateSong(song)
+	_, err = repo.UpdateSong(song)
 	if err != nil {
 		t.Fatalf("failed to update song: %v", err)
 	}
