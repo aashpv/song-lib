@@ -1,0 +1,254 @@
+basePath: /
+definitions:
+  add.Request:
+    properties:
+      group:
+        type: string
+      song:
+        type: string
+    required:
+    - group
+    - song
+    type: object
+  add.Response:
+    properties:
+      error:
+        type: string
+      msg:
+        type: string
+      status:
+        type: string
+    type: object
+  del.Response:
+    properties:
+      error:
+        type: string
+      msg:
+        type: string
+      status:
+        type: string
+    type: object
+  models.Song:
+    properties:
+      group:
+        type: string
+      id:
+        type: integer
+      link:
+        type: string
+      name:
+        type: string
+      release_date:
+        type: string
+      text:
+        type: string
+    type: object
+  resp.Response:
+    properties:
+      error:
+        type: string
+      status:
+        type: string
+    type: object
+  text.Response:
+    properties:
+      group:
+        type: string
+      song:
+        type: string
+      total:
+        type: integer
+      verses:
+        items:
+          type: string
+        type: array
+    type: object
+  up.Request:
+    properties:
+      group:
+        type: string
+      link:
+        type: string
+      release_date:
+        type: string
+      song:
+        type: string
+      text:
+        type: string
+    required:
+    - group
+    - song
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API for managing a song library and fetching song details from an external
+    API.
+  title: Song Library API
+  version: "1.0"
+paths:
+  /songs:
+    get:
+      description: Get songs with pagination support
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Number of songs per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Song'
+            type: array
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/resp.Response'
+        "500":
+          description: Failed to get songs
+          schema:
+            $ref: '#/definitions/resp.Response'
+      summary: Get song with pagination
+      tags:
+      - Songs
+    post:
+      consumes:
+      - application/json
+      description: Add a new song to the library and fetch additional details from
+        an external API
+      parameters:
+      - description: Song details
+        in: body
+        name: song
+        required: true
+        schema:
+          $ref: '#/definitions/add.Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Song added successfully
+          schema:
+            $ref: '#/definitions/add.Response'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/resp.Response'
+        "500":
+          description: Failed to add song
+          schema:
+            $ref: '#/definitions/resp.Response'
+      summary: Add a new song
+      tags:
+      - Songs
+  /songs/{id}:
+    delete:
+      description: Delete a song from the library by its ID
+      parameters:
+      - description: Song ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/del.Response'
+        "404":
+          description: Song not found
+          schema:
+            $ref: '#/definitions/resp.Response'
+        "500":
+          description: Failed to delete song
+          schema:
+            $ref: '#/definitions/resp.Response'
+      summary: Delete a song
+      tags:
+      - Songs
+    put:
+      description: Update a song in the library by its ID
+      parameters:
+      - description: Song ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated song details
+        in: body
+        name: song
+        required: true
+        schema:
+          $ref: '#/definitions/up.Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/resp.Response'
+        "404":
+          description: Song not found
+          schema:
+            $ref: '#/definitions/resp.Response'
+        "500":
+          description: Failed to update song
+          schema:
+            $ref: '#/definitions/resp.Response'
+      summary: Update a song
+      tags:
+      - Songs
+  /songs/{id}/text:
+    get:
+      description: Get song text divided by verses with pagination support
+      parameters:
+      - description: Song ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 3
+        description: Number of verses per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/text.Response'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/resp.Response'
+        "404":
+          description: Song not found
+          schema:
+            $ref: '#/definitions/resp.Response'
+        "500":
+          description: Failed to get song text
+          schema:
+            $ref: '#/definitions/resp.Response'
+      summary: Get song lyrics with pagination
+      tags:
+      - Songs
+swagger: "2.0"
